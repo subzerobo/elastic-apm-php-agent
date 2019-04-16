@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package protos;
+
+import "protos/stacktrace.proto";
+
+message Span {
+    int64 timestamp = 1;
+    string id = 2;
+    string transaction_id = 3 [json_name="transaction_id"];
+    string trace_id = 4 [json_name="trace_id"];
+    string parent_id = 5 [json_name="parent_id"];
+    float start = 6; // in ms
+    string subtype = 7;
+    string action = 8;
+    Context context = 9;
+    float duration = 10;
+    string name = 11;
+    repeated StackTrace stacktrace = 12;
+    string type = 13;
+    bool sync = 14; // is sync or async
+
+
+    message Context {
+        DB db = 1;
+        HTTP http = 2;
+        map<string, string> tags = 3;
+
+        message DB {
+            string instance = 1; // Database instance name
+            string statement = 2; // A database statement (e.g. query) for the given database type
+            string type = 3; // Database type. For any SQL database, "sql". For others, the lower-case database category, e.g. "cassandra", "hbase", or "redis"
+            string user = 4; //Username for accessing database
+        }
+
+        message HTTP {
+            string url = 1; // The raw url of the correlating http request.
+            int32 status_code = 2  [json_name="status_code"]; // The status code of the http request.
+            string method = 3; // The method of the http request.
+        }
+    }
+
+}

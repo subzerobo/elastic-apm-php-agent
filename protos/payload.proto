@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package protos;
+
+import "protos/metadata.proto";
+import "protos/transactionv2.proto";
+import "protos/spanv2.proto";
+
+message Payload {
+    MetaData metadata = 1;
+    repeated Span spans = 2;
+    repeated Transaction transactions = 3;
+}

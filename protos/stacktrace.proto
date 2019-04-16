@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package protos;
+
+message StackTrace {
+    string abs_path = 1  [json_name="abs_path"];
+    int32 colno = 2;
+    string context_line = 3 [json_name="context_line"];
+    string filename = 4;
+    string function = 5;
+    bool library_frame = 6 [json_name="library_frame"];
+    int32 lineno = 7;
+    string module = 8;
+    repeated string post_context = 9 [json_name="post_context"];
+    repeated string pre_context = 10 [json_name="pre_context"];
+    map<string,string> vars = 11;
+}

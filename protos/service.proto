@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package protos;
+
+message Service {
+    Agent agent = 1;
+    Framework framework = 2;
+    Language language = 3;
+    string name = 4;
+    string environment = 5;
+    Runtime runtime = 6;
+    string version = 7;
+
+
+    message Framework {
+        // Name and version of the web framework used
+        string name = 1;
+        string version = 2;
+    }
+
+    message Language {
+        // Name and version of the programming language used
+        string name = 1;
+        string version = 2;
+    }
+
+    message Agent {
+        // Name and version of the Elastic APM agent
+        string name = 1;
+        string version = 2;
+    }
+
+    message Runtime {
+        // Name and version of the language runtime running this service
+        string name = 1;
+        string version = 2;
+    }
+
+}

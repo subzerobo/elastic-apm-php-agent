@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package protos;
+
+message System {
+    string architecture = 1;
+    string hostname = 2;
+    string platform = 3;
+    Container container = 4;
+    Kubernetes kubernetes = 5;
+
+    message Container {
+        string id = 1;
+    }
+
+    message Kubernetes {
+        string namespace = 1;
+        Pod pod = 2;
+        Node node = 3;
+
+        message Pod {
+            string name = 1;
+            string uid = 2;
+        }
+
+        message Node {
+            string name = 1;
+        }
+    }
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package protos;
+
+message Process {
+    int32 pid = 1;
+    int32 ppid = 2;
+    string title = 3;
+    repeated string argv = 4;
+}

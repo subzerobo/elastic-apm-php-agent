@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package protos;
+
+import "protos/user.proto";
+
+message Context {
+    map<string, string> custom = 1;
+    Response response = 2;
+    Request request = 3;
+    map<string, string> tags = 4;
+    User user = 5;
+    message Response {
+        bool finished = 1;
+        Headers headers = 2;
+        bool headers_sent = 3 [json_name="headers_sent"];
+        int32 status_code = 4 [json_name="status_code"];
+
+        message Headers {
+            string content_type = 1 [json_name="content_type"];
+        }
+    }
+
+    message Request {
+        string body = 1;
+        map<string, string> env = 2;
+        Headers headers = 3;
+        string http_version = 4 [json_name="http_version"];
+        string method = 5;
+        Socket socket = 6;
+        Url url = 7;
+        map<string, string> cookies = 8;
+
+        message Socket {
+            bool encrypted = 1;
+            string remote_address = 2 [json_name="remote_address"];
+        }
+
+        message Url {
+            string raw = 1;
+            string protocol = 2;
+            string full = 3;
+            string hostname = 4;
+            string port = 5;
+            string pathname = 6;
+            string search = 7;
+            string hash = 8;
+        }
+
+        message Headers {
+            string content_type = 1 [json_name="content_type"];
+            string cookie = 2;
+            string user_agent = 3;
+        }
+    }
+
+}

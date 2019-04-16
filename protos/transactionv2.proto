@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package protos;
+
+import "protos/context.proto";
+
+message Transaction {
+
+    string id = 1;
+    string trace_id = 2 [json_name="trace_id"];
+    string parent_id = 3 [json_name="parent_id"];
+    string name = 4;
+    string type = 5;
+    int64 timestamp = 6;
+    float duration = 7; // in ms with 3 decimal points
+    string result = 8;
+    bool sampled = 9;
+    map<string, string> marks = 10;
+    SpanCount span_count = 11 [json_name="span_count"];
+    Context context = 12;
+
+    message SpanCount {
+        int32 started = 1;
+        int32 dropped = 2;
+    }
+}
