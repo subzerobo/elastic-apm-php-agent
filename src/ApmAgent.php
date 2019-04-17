@@ -53,6 +53,11 @@ class ApmAgent
     private $sharedData;
 
     /**
+     * @var string
+     */
+    private $currentTransactionName;
+
+    /**
      * @var ConnectorErrorHandlerInterface
      */
     protected $tcpErrorHandler;
@@ -62,6 +67,7 @@ class ApmAgent
      */
     protected $udpErrorHandler;
 
+
     /**
      * ApmAgent constructor.
      *
@@ -70,7 +76,6 @@ class ApmAgent
      * @param EventSharedData|null       $sharedData
      *
      * @throws Exception\MissingAppNameException
-     * @throws Exceptions\MissingDataException
      * @throws Exceptions\TimerAlreadyStartedException
      */
 
@@ -277,6 +282,18 @@ class ApmAgent
 
     public function setUDPErrorHandler(ConnectorErrorHandlerInterface $udpError) {
         $this->udpErrorHandler = $udpError;
+    }
+
+    public function setCurrentTransactionName(string $name){
+        $this->currentTransactionName = $name;
+    }
+
+    public function getCurrentTransactionName() {
+        return $this->currentTransactionName;
+    }
+
+    public function isActive() :bool {
+        return $this->config->get('active');
     }
 
 }
