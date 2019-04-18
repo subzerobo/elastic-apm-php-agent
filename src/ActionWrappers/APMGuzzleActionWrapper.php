@@ -10,6 +10,7 @@ namespace Subzerobo\ElasticApmPhpAgent\ActionWrappers;
 
 
 use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Response;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\SpanContextData;
 
 class APMGuzzleActionWrapper extends APMHandlerAbstract
@@ -38,41 +39,46 @@ class APMGuzzleActionWrapper extends APMHandlerAbstract
 
             $this->span = $tx->startSpan("cURL" , self::SPAN_TYPE);
             $this->span->setSubType("http");
+
+            $this->setData("url", $request->getUri()->__toString());
+            $this->setData("method", $request->getMethod());
         }
     }
 
     /**
-     * @param Request       $request
-     * @param string $actionName
-     * @param array  $actionData
+     * @param Response  $response
+     * @param string    $actionName
+     * @param array     $actionData
      *
      * @return mixed|void
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStartedException
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStoppedException
+     * @throws \Exception
      * @author alikaviani <a.kaviani@sabavision.ir>
-     * @since  2019-04-17 18:19
+     * @since  2019-04-18 10:38
      */
-    public function handleAfter($request, string $actionName, array $actionData = [])
+    public function handleAfter($response, string $actionName, array $actionData = [])
     {
-        parent::handleAfter($request, $actionName, $actionData);
+        parent::handleAfter($response, $actionName, $actionData);
+
         if ($this->apmAgent->isActive()) {
 
-            $contextData = new SpanContextData();
-            $contextData->setHttp('');
-            $this->span->setContextFromContextData($contextData);
+            $url = $this->getData("url");
+            $method = $this->getData("method");
+            $headers = $this->getData("headers");
+
+            $spanContextData = new SpanContextData();
+            $spanContextData->setHttp($url,$response->getStatusCode(),$method);
+
+            $tags = [
+                'response_headers' => json_encode($response->getHeaders()),
+                'protocol_version' => $response->getProtocolVersion(),
+            ];
+            $spanContextData->setTags($tags);
+
+            $this->span->setContextFromContextData($spanContextData);
 
             $this->span->stop();
-
-            "context" => [
-                'http' => [
-                    'url'               => $response->request->raw_headers,
-                    'method'            => $type,
-                    'status_code'       => $response->code
-                ],
-                'tags' => [
-                    'response_headers'  => $response->raw_headers,
-                    'curl_info'         => urldecode(http_build_query($response->meta_data,'',', ')),
-                    'body'              => $response->raw_body,
-                ]
-            ]
         }
     }
 

@@ -8,7 +8,6 @@
 
 namespace Subzerobo\ElasticApmPhpAgent\Middlewares;
 
-use GuzzleHttp\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Subzerobo\ElasticApmPhpAgent\ActionWrappers\APMHandlerAbstract;
 
@@ -22,17 +21,6 @@ class GuzzleAPMMiddleware
     public function __construct(APMHandlerAbstract $actionWrapper)
     {
         $this->actionWrapper = $actionWrapper;
-    }
-
-    public function invoke_old(callable $handler)
-    {
-        $apmActionWrapper = $this->actionWrapper;
-        return function (RequestInterface $request, array $options) use ($handler, $apmActionWrapper) {
-            $apmActionWrapper->handleBefore($request,'CURL', []);
-            $result = $handler($request, $options);
-            $apmActionWrapper->handleAfter($request,'CURL', []);
-            return $result;
-        };
     }
 
     public function __invoke(callable $handler) {
@@ -63,6 +51,5 @@ class GuzzleAPMMiddleware
             return $response;
         };
     }
-
 
 }
