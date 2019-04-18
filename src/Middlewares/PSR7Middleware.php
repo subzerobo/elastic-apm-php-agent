@@ -54,6 +54,8 @@ class PSR7Middleware
 
         // TODO: Implement __invoke() method.
         $response = $next($request, $response);
+
+
         // Set and Stop Transaction
         $transactionEvent->setResult("HTTP " . $response->getStatusCode());
         $transactionEvent->setType("request");
