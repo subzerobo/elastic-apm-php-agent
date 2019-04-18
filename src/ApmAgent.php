@@ -85,7 +85,7 @@ class ApmAgent
      * @throws Exceptions\TimerAlreadyStartedException
      */
 
-    public function __construct(array $config, TransactionNameGeneratorInterface $nameGenerator, EventFactoryInterface $eventFactory = null, EventSharedData $sharedData = null)
+    public function __construct(array $config, TransactionNameGeneratorInterface $nameGenerator = null, EventFactoryInterface $eventFactory = null, EventSharedData $sharedData = null)
     {
         // Initialize ApmAgent Config
         $this->config = new Config($config);
