@@ -239,8 +239,7 @@ class TransactionEvent
 
 
     //TODO: Important.......... implement Marks
-
-    //TODO: Important.......... implement Span Count
+    
 
     /**
      * Gets the Protobuf Transaction Object of TransactionEvent

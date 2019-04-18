@@ -63,6 +63,7 @@ class Config
             'serverUrl'         => 'http://127.0.0.1:8200',
             'secretToken'       => null,
             'hostname'          => gethostname(),
+            'host'              => null,
             'active'            => true,
             'timeout'           => 5,
             'apmVersion'        => 'v2',
@@ -81,6 +82,7 @@ class Config
             'kuberPodNameEnv'   => 'MY_POD_NAME',
             'kuberPodUidEnv'    => 'MY_POD_UID' ,
             'kuberNodeNameEnv'  => 'MY_NODE_NAME' ,
+            'cleanup_rules' => [],
         ];
     }
 }

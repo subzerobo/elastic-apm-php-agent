@@ -12,7 +12,9 @@ use Subzerobo\ElasticApmPhpAgent\Connectors\ConnectorErrorHandlerInterface;
 use Subzerobo\ElasticApmPhpAgent\Connectors\TCP;
 use Subzerobo\ElasticApmPhpAgent\Connectors\UDP;
 use Subzerobo\ElasticApmPhpAgent\Factories\DefaultEventFactory;
+use Subzerobo\ElasticApmPhpAgent\Factories\DefaultTransactionNameFactoryAbstract;
 use Subzerobo\ElasticApmPhpAgent\Factories\EventFactoryInterface;
+use Subzerobo\ElasticApmPhpAgent\Factories\TransactionNameGeneratorInterface;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\Payload;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\TransactionEvent;
 use Subzerobo\ElasticApmPhpAgent\Exceptions\UnknownTransactionException;
@@ -67,19 +69,23 @@ class ApmAgent
      */
     protected $udpErrorHandler;
 
-
+    /**
+     * @var TransactionNameGeneratorInterface
+     */
+    protected $nameGenerator;
     /**
      * ApmAgent constructor.
      *
-     * @param array                      $config
-     * @param EventFactoryInterface|null $eventFactory
-     * @param EventSharedData|null       $sharedData
+     * @param array                             $config
+     * @param TransactionNameGeneratorInterface $nameGenerator
+     * @param EventFactoryInterface|null        $eventFactory
+     * @param EventSharedData|null              $sharedData
      *
      * @throws Exception\MissingAppNameException
      * @throws Exceptions\TimerAlreadyStartedException
      */
 
-    public function __construct(array $config, EventFactoryInterface $eventFactory = null, EventSharedData $sharedData = null)
+    public function __construct(array $config, TransactionNameGeneratorInterface $nameGenerator, EventFactoryInterface $eventFactory = null, EventSharedData $sharedData = null)
     {
         // Initialize ApmAgent Config
         $this->config = new Config($config);
@@ -89,6 +95,8 @@ class ApmAgent
 
         // Set The User Provided Shared Data
         $this->sharedData = $sharedData ?? new EventSharedData();
+
+        $this->nameGenerator = $nameGenerator ?? new DefaultTransactionNameFactoryAbstract($this->config);
 
         // Add Config Env & Cookie List to sharedData
         $this->sharedData->setEnvWhiteListKeys($this->config->get('env', []));
@@ -108,21 +116,24 @@ class ApmAgent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-10 14:26
      */
-    public function startTransaction(string $name, EventSharedData $ctxSharedData = null, float $startedOn = null): TransactionEvent
+    public function startTransaction(string $name = null, EventSharedData $ctxSharedData = null, float $startedOn = null): TransactionEvent
     {
+        $transactionName = $name ?? $this->nameGenerator->generateTransactionName();
+
+        $this->setCurrentTransactionName($transactionName);
 
         $transactionStore = $this->payload->getTransactionStore();
 
         $transactionStore->register(
             $this->eventFactory->createTransaction(
-                $name,
+                $transactionName,
                 $this->sharedData->merge($ctxSharedData),
                 $startedOn
             )
         );
 
         // Get newly create transaction event object from store
-        $transaction = $transactionStore->fetch($name);
+        $transaction = $transactionStore->fetch($transactionName);
 
         // Start the Transaction if $startedOn is not provided
         if ($startedOn === null) {
@@ -144,8 +155,11 @@ class ApmAgent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 12:07
      */
-    public function stopTransaction(string $name, EventMetaData $meta = null) {
-        $this->getTransactionEvent($name)->stop();
+    public function stopTransaction(string $name = null, EventMetaData $meta = null) {
+
+        $transactionName = $name ?? $this->getCurrentTransactionName();
+
+        $this->getTransactionEvent($transactionName)->stop();
         if ($meta) {
             $this->getTransactionEvent($name)->setMeta($meta);
         }
