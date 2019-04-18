@@ -59,6 +59,12 @@ class APMPdoActionWrapper extends APMHandlerAbstract
     public function handleAfter($stmt, string $actionName, array $actionData = [])
     {
         parent::handleAfter($stmt, $actionName, $actionData);
+
+        $total = $this->getData('total');
+
+        (int)$GLOBALS['sqlProfileCnt']++;
+        $GLOBALS['sqlProfile'] += $total;
+
         if ($this->apmAgent->isActive()) {
             $contextData = new SpanContextData();
             $contextData->setDB($stmt->getServerName(),$stmt->debug()->preview(),'sql','Redis');

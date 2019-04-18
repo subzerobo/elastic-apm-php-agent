@@ -55,6 +55,16 @@ class APMRedisActionWrapper extends APMHandlerAbstract
     public function handleAfter($redisObject, string $actionName, array $actionData = [])
     {
         parent::handleAfter($redisObject,$actionName,$actionData);
+
+        $total  = $this->getData('total');
+
+        // Store Duration in $GLOBALS to send as header
+        $GLOBALS['redisProfileEach'][$redisObject->getServerIdentifier()] += $total;
+        $GLOBALS['redisProfileEachCnt'][$redisObject->getServerIdentifier()]++;
+
+        $GLOBALS['redisProfile'] += $total;
+        $GLOBALS['redisProfileCnt']++;
+
         if ($this->apmAgent->isActive()) {
             $contextData = new SpanContextData();
             $contextData->setDB($redisObject->getServerIdentifier(),$actionName . " " . implode(' ', $actionData),'Redis');
