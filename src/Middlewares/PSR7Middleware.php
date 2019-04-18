@@ -61,9 +61,9 @@ class PSR7Middleware
         $transactionEvent->setType("request");
         $transactionEvent->setIsSampled(true);
         $transactionEvent->setResponseFromArray([
-            'finished'     => true,
-            'headers_sent' => true,
-            'status_code'  => $response->getStatusCode(),]
+                'finished'     => true,
+                'headers_sent' => true,
+                'status_code'  => $response->getStatusCode(),]
         );
         $transactionEvent->stop();
         $this->apmAgent->send();
