@@ -145,7 +145,7 @@ class ApmAgent
 
     /**
      * Stops the Transaction
-     * 
+     *
      * @param string             $name
      * @param EventMetaData|null $meta
      *
@@ -164,7 +164,7 @@ class ApmAgent
             $this->getTransactionEvent($name)->setMeta($meta);
         }
     }
-    
+
     /**
      * @param string $name
      *
@@ -231,7 +231,7 @@ class ApmAgent
             if ($this->config->get('active') === false) {
                 return true;
             }
-            
+
             $connector = new TCP($this->config);
             $status = true;
 
