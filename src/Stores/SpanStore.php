@@ -29,6 +29,6 @@ class SpanStore extends AbstractStore
     public function register(SpanEvent $span)
     {
         // Push Span to AbstractStore
-        $this->store[$span->getSpanName()] = $span;
+        $this->store[$span->getSpanID()] = $span;
     }
 }

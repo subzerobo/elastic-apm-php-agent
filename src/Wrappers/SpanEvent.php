@@ -91,6 +91,17 @@ class SpanEvent
 
 
     /**
+     * Gets the name of current span
+     *
+     * @return string
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-04-11 13:38
+     */
+    public function getSpanID() {
+        return $this->span->getId();
+    }
+
+    /**
      * Sets the Span Name
      *
      * @param string $name
