@@ -28,7 +28,7 @@ class TransactionEvent
      * @var SpanStore
      */
     protected $spanEventStore;
-    
+
     /**
      * @var Timer
      */
@@ -122,12 +122,13 @@ class TransactionEvent
             // Start span if $start is not provided
             $spanEvent->start();
         }
+        $spanId = $spanEvent->getSpanID();
         $this->addSpan($spanEvent);
-        return $this->spanEventStore->fetch($name);
+        return $this->spanEventStore->fetch($spanId);
     }
 
     /**
-     * @param string     $name
+     * @param string     $spanId
      * @param float|null $duration
      *
      * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStartedException
@@ -135,8 +136,8 @@ class TransactionEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 13:50
      */
-    public function stopSpan(string $name, float $duration = null) {
-        $spanEvent = $this->getSpanByName($name);
+    public function stopSpan(string $spanId, float $duration = null) {
+        $spanEvent = $this->getSpanByID($spanId);
         $spanEvent->stop($duration);
     }
 
@@ -153,14 +154,14 @@ class TransactionEvent
     }
 
     /**
-     * @param $name
+     * @param $Id
      *
      * @return SpanEvent|null
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 13:49
      */
-    public function getSpanByName($name) {
-        return $this->spanEventStore->fetch($name);
+    public function getSpanByID($Id) {
+        return $this->spanEventStore->fetch($Id);
     }
 
     /**
@@ -205,7 +206,7 @@ class TransactionEvent
         return $this->transaction->getDuration();
     }
 
-    
+
     public function setIsSampled(bool $state = true) {
         $this->transaction->setSampled($state);
     }
@@ -239,7 +240,7 @@ class TransactionEvent
 
 
     //TODO: Important.......... implement Marks
-    
+
 
     /**
      * Gets the Protobuf Transaction Object of TransactionEvent
@@ -255,11 +256,11 @@ class TransactionEvent
         // Set MetaData to Transaction
         $this->transaction->setResult($this->metaData->getResult());
         $this->transaction->setType($this->metaData->getType());
-        
+
         // Set Span Count
         $spanCountObject = new Transaction\SpanCount(['started' => $this->spanEventStore->count()]);
         $this->transaction->setSpanCount($spanCountObject);
-        
+
         return $this->transaction;
     }
 
