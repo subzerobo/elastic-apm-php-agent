@@ -278,7 +278,7 @@ trait EventTrait
             ],
             'headers' => [
                 'content_type' => $headers['Content-Type'] ?? '',
-                'user-agent' => $headers['User-Agent'] ?? '',
+                'user_agent' => $headers['User-Agent'] ?? '',
                 'cookie'     => $this->getCookieHeader($headers['Cookie'] ?? ''),
             ],
             'env' => $this->getEnv(),
