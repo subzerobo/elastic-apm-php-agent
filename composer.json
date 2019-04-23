@@ -10,9 +10,6 @@
         "google/protobuf": "^3.7",
         "ramsey/uuid": "^3.8",
         "ralouphie/getallheaders": "^3.0",
-        "ext-json" : "*",
-        "ext-openssl" : "*",
-        "ext-sockets" : "*",
         "ircmaxell/random-lib": "^1.2",
         "guzzlehttp/guzzle": "^6.3",
         "subzerobo/sabalim-action-wrapper": "^1.0"
