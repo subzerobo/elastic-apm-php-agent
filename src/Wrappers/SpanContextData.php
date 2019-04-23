@@ -50,10 +50,19 @@ class SpanContextData
             'instance' => $instance,
             'statement' => $statement,
             'type' => $type,
-            'user' => $username
         ];
+
+        if ($username) {
+            $dbArr['user'] = $username;
+        }
+
+
         $this->context->setDb(new Context\DB($dbArr));
+
+        //dd($dbArr);
+
         return $this;
+
     }
 
     /**
