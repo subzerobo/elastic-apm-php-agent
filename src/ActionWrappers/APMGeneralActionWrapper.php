@@ -8,6 +8,7 @@
 
 namespace Subzerobo\ElasticApmPhpAgent\ActionWrappers;
 
+use Subzerobo\ElasticApmPhpAgent\Wrappers\SpanContextData;
 
 class APMGeneralActionWrapper extends APMHandlerAbstract
 {
