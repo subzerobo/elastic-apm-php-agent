@@ -247,7 +247,10 @@ class Payload
 
         // Step 3 Write Transactions
         foreach ($txEvents as $txEvent) {
-            $this->ndjson->plainWrite("transaction", $txEvent->getProtoBufTransaction()->serializeToJsonString());
+            // Make sure span count has started = 1;
+            $data = $txEvent->getProtoBufTransaction()->serializeToJsonString();
+            $data = str_replace('"span_count":{}', '"span_count":{"started":1}', $data);
+            $this->ndjson->plainWrite("transaction", $data);
         }
 
         // Finally return payload ND-JSON string
