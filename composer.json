@@ -1,10 +1,19 @@
 {
     "name": "subzerobo/elastic-apm-php-agent",
     "description": "PHP Agent for Elastic APM With Intake API V2 Support + UDP Support",
-    "type": "library",
-    "repositories": [
-        { "type": "vcs", "url": "git@git.saba-e.com:Sabalim2/sabalim-action-wrapper.git" }
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ali Kaviani",
+            "email": "ali.kaviani@gmail.com",
+            "homepage": "http://subzeroboy.com",
+            "role": "Developer"
+        }
     ],
+    "support": {
+        "email": "ali.kaviani@gmail.com"
+    },
+    "type": "library",
     "require": {
         "php": ">=7.0",
         "google/protobuf": "^3.7",
@@ -26,12 +35,5 @@
             "Subzerobo\\ElasticApmPhpAgent\\": "src/",
             "" : "protoClasses"
         }
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Ali Kaviani",
-            "email": "ali.kaviani@gmail.com"
-        }
-    ]
+    }
 }
