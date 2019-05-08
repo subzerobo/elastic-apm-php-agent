@@ -32,7 +32,7 @@ class APMRedisActionWrapper extends APMHandlerAbstract
             $txName = $this->apmAgent->getCurrentTransactionName();
             $tx     = $this->apmAgent->getTransactionEvent($txName);
 
-            $this->span = $tx->startSpan("Redis : " . $redisObject->getServerIdentifier(), self::SPAN_TYPE);
+            $this->span = $tx->startSpan("Redis:" . $redisObject->getServerIdentifier(), self::SPAN_TYPE);
         }
     }
 

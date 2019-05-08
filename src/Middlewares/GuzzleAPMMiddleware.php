@@ -28,13 +28,15 @@ class GuzzleAPMMiddleware
         $apmActionWrapper = $this->actionWrapper;
 
         $before = function($request, $options) use ($apmActionWrapper) {
-            $apmActionWrapper->handleBefore($request,'cURL',[]);
+            $type = $options['type'] ?? "General";
+            $apmActionWrapper->handleBefore($request,$type,[]);
             //var_dump( "BTap " . microtime(true) );
         };
 
         $after = function($request,$option,$response) use ($apmActionWrapper) {
-            $response->then(function (\Psr\Http\Message\ResponseInterface $response) use($apmActionWrapper) {
-                $apmActionWrapper->handleAfter($response,'cURL',[]);
+            $type = $options['type'] ?? "General";
+            $response->then(function (\Psr\Http\Message\ResponseInterface $response) use($apmActionWrapper,$type) {
+                $apmActionWrapper->handleAfter($response,$type,[]);
             });
         };
 

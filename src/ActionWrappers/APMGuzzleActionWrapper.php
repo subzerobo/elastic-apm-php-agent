@@ -37,7 +37,7 @@ class APMGuzzleActionWrapper extends APMHandlerAbstract
             $txName = $this->apmAgent->getCurrentTransactionName();
             $tx     = $this->apmAgent->getTransactionEvent($txName);
 
-            $this->span = $tx->startSpan("cURL" , self::SPAN_TYPE);
+            $this->span = $tx->startSpan("cURL:" . $actionName , self::SPAN_TYPE);
             $this->span->setSubType("http");
 
             $this->setData("url", $request->getUri()->__toString());

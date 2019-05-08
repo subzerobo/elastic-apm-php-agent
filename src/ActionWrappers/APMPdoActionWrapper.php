@@ -36,7 +36,7 @@ class APMPdoActionWrapper extends APMHandlerAbstract
             $txName = $this->apmAgent->getCurrentTransactionName();
             $tx     = $this->apmAgent->getTransactionEvent($txName);
 
-            $spanName = "PDO Query : " . $stmt->getServerName();
+            $spanName = "PDO:" . $stmt->getServerName();
 
             $this->span = $tx->startSpan($spanName, self::SPAN_TYPE);
         }
