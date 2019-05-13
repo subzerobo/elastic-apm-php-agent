@@ -15,6 +15,27 @@ class NDJsonHandler
     private $depth;
     private $output;
 
+    /**
+     * Use to Bug Fix for protobuf php extension !!!
+     * @var array
+     */
+    private $jsonSerializerReplaceArray = [
+        "spanCount" => "span_count",
+        "transactionId" => "transaction_id",
+        "parentId" => "parent_id",
+        "traceId" => "trace_id",
+        "preContext" => "pre_context",
+        "postContext" => "post_context",
+        "libraryFrame" => "library_frame",
+        "contextLine" => "context_line",
+        "absPath" => "abs_path",
+        "statusCode" => "status_code",
+        "contentType" => "content_type",
+        "remoteAddress" => "remote_address",
+        "httpVersion" => "http_version",
+        "headersSent" => "headers_sent",
+    ];
+
     public function __construct($depth = 512)
     {
         if ($depth !== 512 && PHP_VERSION < 5.5) {
@@ -49,6 +70,11 @@ class NDJsonHandler
 
         $re = '/("timestamp":("(\d{16})"))/m';
         $this->output = preg_replace($re, '"timestamp":$3',$this->output);
+
+        foreach ($this->jsonSerializerReplaceArray as $search => $replace) {
+            $this->output = str_replace($search,$replace,$this->output);
+        }
+
         return $this->output;
     }
 
