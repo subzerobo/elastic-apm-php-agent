@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package protos;
+
+import "protos/context.proto";
+import "protos/stacktrace.proto";
+
+message Error {
+
+    int64 timestamp = 1;
+    string id = 2;
+    string transaction_id = 3 [json_name="transaction_id"];
+    string trace_id = 4 [json_name="trace_id"];
+    string parent_id = 5 [json_name="parent_id"];
+    Transaction transaction =6;
+    Context context = 7;
+    string culprit = 8;
+    Exception exception = 9;
+    Log log = 10;
+
+    message Exception {
+        string code = 1;
+        string message = 2;
+        string module = 3;
+        map<string, string> attributes = 4;
+        repeated StackTrace stacktrace = 5;
+        bool handled = 6;
+        string type = 7;
+    }
+
+    message Log {
+        string level = 1;
+        string logger_name = 2 [json_name="logger_name"];
+        string message = 3;
+        string param_message = 4 [json_name="param_message"];
+        repeated StackTrace stacktrace = 5;
+    }
+
+    message Transaction {
+        bool sampled = 1; // Default must be true if you have single transaction
+    }
+}
