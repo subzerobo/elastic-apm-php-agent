@@ -34,6 +34,8 @@ class NDJsonHandler
         "remoteAddress" => "remote_address",
         "httpVersion" => "http_version",
         "headersSent" => "headers_sent",
+        "loggerName" => "logger_name",
+        "paramMessage" => "param_message"
     ];
 
     public function __construct($depth = 512)

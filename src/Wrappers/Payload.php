@@ -14,6 +14,7 @@ use Protos\User;
 use Subzerobo\ElasticApmPhpAgent\ApmAgent;
 use Subzerobo\ElasticApmPhpAgent\Misc\Config;
 use Subzerobo\ElasticApmPhpAgent\NDJson\NDJsonHandler;
+use Subzerobo\ElasticApmPhpAgent\Stores\ErrorStore;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\Helpers\EventSharedData;
 use Subzerobo\ElasticApmPhpAgent\Misc\Timer;
 use Subzerobo\ElasticApmPhpAgent\Stores\TransactionStore;
@@ -36,6 +37,10 @@ class Payload
      */
     protected $TransactionEventStore;
 
+    /**
+     * @var ErrorStore
+     */
+    protected $ErrorEventStore;
 
     /**
      * @var NDJsonHandler
@@ -65,6 +70,7 @@ class Payload
 
         // Initialize the Stores
         $this->TransactionEventStore = new TransactionStore();
+        $this->ErrorEventStore = new ErrorStore();
 
 
         // Initialize MetaData Object
@@ -191,6 +197,10 @@ class Payload
         return $this->TransactionEventStore;
     }
 
+    public function getErrorStore() : ErrorStore {
+        return $this->ErrorEventStore;
+    }
+
     /**
      * Creates Payload Protobuf Object
      *
@@ -234,7 +244,16 @@ class Payload
         // Step 1 Write Meta
         $this->ndjson->plainWrite("metadata",$this->MetaData->serializeToJsonString());
 
-        // Step 2 Write Spans
+        // Step 2 Write Errors
+        /* @var $errEvents ErrorEvent[] */
+        $errEvents = $this->ErrorEventStore->list();
+
+        foreach ($errEvents as $errEvent) {
+            $data = $errEvent->getProtoBufError()->serializeToJsonString();
+            $this->ndjson->plainWrite("error", $data);
+        }
+
+        // Step 3 Write Spans
         /* @var $txEvents TransactionEvent[] */
         $txEvents = $this->TransactionEventStore->list();
 
@@ -245,7 +264,7 @@ class Payload
             }
         }
 
-        // Step 3 Write Transactions
+        // Step 4 Write Transactions
         foreach ($txEvents as $txEvent) {
             // Make sure span count has started = 1;
             $data = $txEvent->getProtoBufTransaction()->serializeToJsonString();

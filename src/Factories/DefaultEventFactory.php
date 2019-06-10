@@ -9,6 +9,7 @@
 namespace Subzerobo\ElasticApmPhpAgent\Factories;
 
 
+use Subzerobo\ElasticApmPhpAgent\Wrappers\ErrorEvent;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\SpanEvent;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\TransactionEvent;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\Helpers\EventSharedData;
@@ -20,12 +21,15 @@ class DefaultEventFactory implements EventFactoryInterface
      * @param \Throwable      $throwable
      * @param EventSharedData $contexts
      *
+     * @return ErrorEvent
+     * @throws \Exception
      * @author alikaviani <a.kaviani@sabavision.ir>
-     * @since  2019-04-10 14:15
+     * @since  2019-06-10 14:54
      */
     public function createError(\Throwable $throwable, EventSharedData $contexts)
     {
-        // TODO: Implement createError() method.
+        $errorEvent = new ErrorEvent($throwable, $contexts);
+        return $errorEvent;
     }
 
     /**

@@ -15,6 +15,7 @@ use Subzerobo\ElasticApmPhpAgent\Factories\DefaultEventFactory;
 use Subzerobo\ElasticApmPhpAgent\Factories\DefaultTransactionNameFactoryAbstract;
 use Subzerobo\ElasticApmPhpAgent\Factories\EventFactoryInterface;
 use Subzerobo\ElasticApmPhpAgent\Factories\TransactionNameGeneratorInterface;
+use Subzerobo\ElasticApmPhpAgent\Wrappers\ErrorEvent;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\Payload;
 use Subzerobo\ElasticApmPhpAgent\Wrappers\TransactionEvent;
 use Subzerobo\ElasticApmPhpAgent\Exceptions\UnknownTransactionException;
@@ -179,6 +180,30 @@ class ApmAgent
             throw new UnknownTransactionException($name);
         }
         return $transactionEvent;
+    }
+
+    /**
+     * Registers an Error on Server
+     *
+     * @param \Throwable           $throwable
+     * @param EventSharedData|null $ctxSharedData
+     *
+     * @return ErrorEvent
+     * @throws \Exception
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-10 14:58
+     */
+    public function reportError(\Throwable $throwable, EventSharedData $ctxSharedData = null) {
+        $errorStore = $this->payload->getErrorStore();
+
+        $errEvent = $this->eventFactory->createError(
+            $throwable,
+            $this->sharedData->merge($ctxSharedData)
+        );
+
+        $errorStore->register($errEvent);
+
+        return $errEvent;
     }
 
     /**
