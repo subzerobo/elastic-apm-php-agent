@@ -193,7 +193,7 @@ class ApmAgent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-06-10 14:58
      */
-    public function reportError(\Throwable $throwable, EventSharedData $ctxSharedData = null) {
+    public function reportError(\Throwable $throwable, array $attributes, EventSharedData $ctxSharedData = null) {
         $transactionEvent = $this->getTransactionEvent($this->currentTransactionName);
 
         $errorStore = $this->payload->getErrorStore();
@@ -202,6 +202,8 @@ class ApmAgent
             $throwable,
             $this->sharedData->merge($ctxSharedData)
         );
+
+        $errEvent->setTags($attributes);
 
         $errEvent->setException($this->config->get("max_level"));
 
