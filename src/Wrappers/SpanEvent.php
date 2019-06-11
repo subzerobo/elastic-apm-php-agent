@@ -31,6 +31,12 @@ class SpanEvent
      */
     public $timer;
 
+
+    /**
+     * @var bool
+     */
+    private $isStopped = false;
+
     /**
      * SpanEvent constructor.
      *
@@ -42,7 +48,7 @@ class SpanEvent
      *
      * @throws \Exception
      */
-    public function __construct(string $name,string $type, TransactionEvent $tEvent, array $data =null, $start = null)
+    public function __construct(string $name, string $type, TransactionEvent $tEvent, array $data = null, $start = null)
     {
         $this->span = new Span($data);
         $this->setId(UID::Generate(16));
@@ -51,7 +57,7 @@ class SpanEvent
         $this->setTransactionId($tEvent->getId());
         $this->setSpanName($name);
         $this->setType($type);
-        
+
         // Create the Timer of Transaction
         $this->timer = new Timer($start);
     }
@@ -87,6 +93,19 @@ class SpanEvent
         // Stop the Timer
         $this->timer->stop();
         $this->setDuration($duration ?? round($this->timer->getDurationInMilliseconds(), 3));
+        $this->isStopped = true;
+    }
+
+    /**
+     * Specify if span is stopped
+     *
+     * @return bool
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-11 11:26
+     */
+    public function isSpanStopped()
+    {
+        return $this->isStopped;
     }
 
 
@@ -97,7 +116,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:38
      */
-    public function getSpanID() {
+    public function getSpanID()
+    {
         return $this->span->getId();
     }
 
@@ -109,9 +129,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:56
      */
-    public function setSpanName(string $name) {
+    public function setSpanName(string $name)
+    {
         $this->span->setName($name);
     }
+
     /**
      * Gets the name of current span
      *
@@ -119,7 +141,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:38
      */
-    public function getSpanName() {
+    public function getSpanName()
+    {
         return $this->span->getName();
     }
 
@@ -132,9 +155,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function setType(string $type) {
+    public function setType(string $type)
+    {
         $this->span->setType($type);
     }
+
     /**
      * Gets the Span Type
      *
@@ -142,7 +167,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function getType(){
+    public function getType()
+    {
         return $this->span->getType();
     }
 
@@ -155,9 +181,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function setSubType(string $type) {
+    public function setSubType(string $type)
+    {
         $this->span->setSubType($type);
     }
+
     /**
      * Gets the Span SubType
      *
@@ -165,7 +193,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function getSubType(){
+    public function getSubType()
+    {
         return $this->span->getSubType();
     }
 
@@ -178,9 +207,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function setAction(string $action) {
+    public function setAction(string $action)
+    {
         $this->span->setAction($action);
     }
+
     /**
      * Gets the Span Action
      *
@@ -188,7 +219,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 13:57
      */
-    public function getAction(){
+    public function getAction()
+    {
         return $this->span->getAction();
     }
 
@@ -201,9 +233,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:05
      */
-    public function setId(string $id) {
+    public function setId(string $id)
+    {
         $this->span->setId($id);
     }
+
     /**
      * Gets the id of Span
      *
@@ -211,21 +245,25 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:05
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->span->getId();
     }
 
 
     /**
      * Sets the Hex encoded 64 random bits ID of the parent transaction or span.
+     *
      * @param string $id
      *
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:06
      */
-    public function setParentId(string $id) {
+    public function setParentId(string $id)
+    {
         $this->span->setParentId($id);
     }
+
     /**
      * Gets the ID of the parent transaction or span
      *
@@ -233,7 +271,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:07
      */
-    public function getParentId() {
+    public function getParentId()
+    {
         return $this->span->getParentId();
     }
 
@@ -246,9 +285,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:06
      */
-    public function setTransactionId(string $id) {
+    public function setTransactionId(string $id)
+    {
         $this->span->setTransactionId($id);
     }
+
     /**
      * Gets the ID of the parent transaction
      *
@@ -256,7 +297,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:07
      */
-    public function getTransactionId() {
+    public function getTransactionId()
+    {
         return $this->span->getTransactionId();
     }
 
@@ -269,16 +311,19 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:09
      */
-    public function setTraceId(string $id) {
+    public function setTraceId(string $id)
+    {
         $this->span->setTraceId($id);
     }
+
     /**
      * Gets the TraceId of span
      *
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:09
      */
-    public function getTraceId() {
+    public function getTraceId()
+    {
         return $this->span->getTraceId();
     }
 
@@ -291,12 +336,14 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:11
      */
-    public function setTimestamp(int $ts = null) {
+    public function setTimestamp(int $ts = null)
+    {
         if (is_null($ts)) {
             $ts = microtime(true) * 1000000;
         }
         $this->span->setTimestamp($ts);
     }
+
     /**
      * Gets the timestamp of span
      *
@@ -304,22 +351,25 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:12
      */
-    public function getTimestamp() {
+    public function getTimestamp()
+    {
         return $this->span->getTimestamp();
     }
 
 
     /**
      * Sets the milliseconds passed after start time of parent transaction or span
-     * 
+     *
      * @param float $milliseconds
      *
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:25
      */
-    public function setStart(float $milliseconds) {
+    public function setStart(float $milliseconds)
+    {
         $this->span->setStart($milliseconds);
     }
+
     /**
      * Returns the milliseconds passed after start time of parent transaction or span
      *
@@ -327,7 +377,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:27
      */
-    public function getStart() {
+    public function getStart()
+    {
         return $this->span->getStart();
     }
 
@@ -340,9 +391,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 15:02
      */
-    public function setDuration(float $milliseconds) {
+    public function setDuration(float $milliseconds)
+    {
         $this->span->setDuration($milliseconds);
     }
+
     /**
      * Returns Duration in milliseconds
      *
@@ -350,7 +403,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:27
      */
-    public function getDuration() {
+    public function getDuration()
+    {
         return $this->span->getDuration();
     }
 
@@ -363,9 +417,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:05
      */
-    public function setIsSynced(bool $isSync) {
+    public function setIsSynced(bool $isSync)
+    {
         $this->span->setSync($isSync);
     }
+
     /**
      * Gets sync status of span
      *
@@ -373,7 +429,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-11 14:05
      */
-    public function getIsSynced() {
+    public function getIsSynced()
+    {
         return $this->span->getSync();
     }
 
@@ -386,9 +443,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 11:56
      */
-    public function setContext(Span\Context $spanContext) {
+    public function setContext(Span\Context $spanContext)
+    {
         $this->span->setContext($spanContext);
     }
+
     /**
      * Set the Span Context
      *
@@ -397,16 +456,19 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 11:55
      */
-    public function setContextFromContextData(SpanContextData $span_context_data) {
+    public function setContextFromContextData(SpanContextData $span_context_data)
+    {
         $this->span->setContext($span_context_data->context());
     }
+
     /**
      * Gets the span Context of Span
      * @return Span\Context
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 11:56
      */
-    public function getContext(): Span\Context {
+    public function getContext(): Span\Context
+    {
         return $this->span->getContext();
     }
 
@@ -418,10 +480,11 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 14:58
      */
-    public function addStackTrace(StackTrace $stackTrace) {
+    public function addStackTrace(StackTrace $stackTrace)
+    {
         if ($this->stackTraceDataList) {
             $this->stackTraceDataList->addStackTrace($stackTrace);
-        }else{
+        } else {
             $this->stackTraceDataList = new StackTraceList();
             $this->stackTraceDataList->addStackTrace($stackTrace);
         }
@@ -454,12 +517,14 @@ class SpanEvent
                                           string $module = null,
                                           array $post_context = null,
                                           array $pre_context = null,
-                                          array $vars = null) {
+                                          array $vars = null)
+    {
         // Initialize StackTraceList if empty
         if (!$this->stackTraceDataList)
             $this->stackTraceDataList = new StackTraceList();
-        $this->stackTraceDataList->addStackTraceFromData($abs_path,$colno,$contextLine,$filename,$function,$library_frame,$lineno,$module,$post_context,$pre_context,$vars);
+        $this->stackTraceDataList->addStackTraceFromData($abs_path, $colno, $contextLine, $filename, $function, $library_frame, $lineno, $module, $post_context, $pre_context, $vars);
     }
+
     /**
      * Gets array of StackTraces added to span
      *
@@ -467,7 +532,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 12:37
      */
-    public function getStackTraceList() {
+    public function getStackTraceList()
+    {
         return $this->stackTraceDataList->stackTraceList();
     }
 
@@ -478,7 +544,8 @@ class SpanEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-04-13 12:41
      */
-    public function getSpanObject() {
+    public function getSpanObject()
+    {
         // Fill the StackTrace Data into span
         if (!empty($this->stackTraceDataList)) {
             $this->span->setStacktrace($this->getStackTraceList());
