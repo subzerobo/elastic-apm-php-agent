@@ -86,4 +86,14 @@ class AbstractStore
     public function count() {
         return count($this->store);
     }
+
+    /**
+     * Returns last object in store
+     * @return mixed
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-11 10:55
+     */
+    public function last() {
+        return end($this->store);
+    }
 }

@@ -285,5 +285,4 @@ class Payload
         $this->ndjson->flushOutput();
     }
 
-
 }

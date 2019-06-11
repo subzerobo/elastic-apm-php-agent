@@ -165,6 +165,15 @@ class TransactionEvent
     }
 
     /**
+     * @return SpanEvent
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-11 10:55
+     */
+    public function getLastSpan() {
+        return $this->spanEventStore->last();
+    }
+
+    /**
      * Get List of Current Spans
      *
      * @return SpanEvent[]
