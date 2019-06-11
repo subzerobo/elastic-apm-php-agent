@@ -56,10 +56,8 @@ class ErrorEvent
         $this->error->setContext($initContext);
 
         $this->error->setId($this->getId());
-        // $this->error->setTraceId($this->getTraceId());
 
-        // Fill Exception Data to Error Proto Object
-        $this->setException();
+
 
     }
 
@@ -68,34 +66,52 @@ class ErrorEvent
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-06-10 14:21
      */
-    private function setException() {
+    public function setException(int $maxTraceLevel = 0) {
         $this->error->setCulprit(sprintf('%s:%d', $this->throwable->getFile(), $this->throwable->getLine()));
+
         $pbException = new Error\Exception();
         $pbException->setMessage($this->throwable->getMessage());
         $pbException->setType(get_class($this->throwable));
         $pbException->setCode($this->throwable->getCode());
 
         $pbStackTrace = new StackTraceList();
+        $n = 0;
         foreach ($this->throwable->getTrace() as $trace) {
+            if ($maxTraceLevel!=0 && $n >= $maxTraceLevel)
+                break;
             $pbStackTrace->addStackTraceFromData(
                 $trace['file'],
                 null,
                 null,
-                basename($trace['file']) ?? '(anonymous)',
+                !empty($trace['file']) ? basename($trace['file']) : '(anonymous)',
                 $trace['function'] ?? '(closure)',
-                null,
-                $trace['line'] ?? 0,
+                false,
+                $trace['line'] ?? 1,
                 $trace['class'],
                 null,
                 null,
                 null
             );
+            $n++;
         }
 
         $pbException->setStacktrace($pbStackTrace->stackTraceList());
         $this->error->setException($pbException);
 
     }
+
+    /**
+     * @param TransactionEvent $tEvent
+     *
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-11 16:36
+     */
+    public function setErrorTransaction(TransactionEvent $tEvent)  {
+        $this->error->setTraceId($tEvent->getTraceId());
+        $this->error->setParentId($tEvent->getId());
+        $this->error->setTransactionId($tEvent->getId());
+    }
+
 
     /**
      * Gets the Protobuf Transaction Object of ErrorEvent

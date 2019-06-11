@@ -83,6 +83,7 @@ class Config
             'kuberPodUidEnv'    => 'MY_POD_UID' ,
             'kuberNodeNameEnv'  => 'MY_NODE_NAME' ,
             'cleanup_rules' => [],
+            'max_level'         => 5, // Max Trace Log Level
         ];
     }
 }

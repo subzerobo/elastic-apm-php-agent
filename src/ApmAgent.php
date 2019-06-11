@@ -194,12 +194,18 @@ class ApmAgent
      * @since  2019-06-10 14:58
      */
     public function reportError(\Throwable $throwable, EventSharedData $ctxSharedData = null) {
+        $transactionEvent = $this->getTransactionEvent($this->currentTransactionName);
+
         $errorStore = $this->payload->getErrorStore();
 
         $errEvent = $this->eventFactory->createError(
             $throwable,
             $this->sharedData->merge($ctxSharedData)
         );
+
+        $errEvent->setException($this->config->get("max_level"));
+
+        $errEvent->setErrorTransaction($transactionEvent);
 
         $errorStore->register($errEvent);
 
