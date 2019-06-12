@@ -26,6 +26,10 @@ class Payload extends \Google\Protobuf\Internal\Message
      * Generated from protobuf field <code>repeated .protos.Transaction transactions = 3;</code>
      */
     private $transactions;
+    /**
+     * Generated from protobuf field <code>repeated .protos.Error errors = 4;</code>
+     */
+    private $errors;
 
     /**
      * Constructor.
@@ -36,6 +40,7 @@ class Payload extends \Google\Protobuf\Internal\Message
      *     @type \Protos\MetaData $metadata
      *     @type \Protos\Span[]|\Google\Protobuf\Internal\RepeatedField $spans
      *     @type \Protos\Transaction[]|\Google\Protobuf\Internal\RepeatedField $transactions
+     *     @type \Protos\Error[]|\Google\Protobuf\Internal\RepeatedField $errors
      * }
      */
     public function __construct($data = NULL) {
@@ -105,6 +110,28 @@ class Payload extends \Google\Protobuf\Internal\Message
     {
         $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Protos\Transaction::class);
         $this->transactions = $arr;
+
+        return $this;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .protos.Error errors = 4;</code>
+     * @return \Google\Protobuf\Internal\RepeatedField
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Generated from protobuf field <code>repeated .protos.Error errors = 4;</code>
+     * @param \Protos\Error[]|\Google\Protobuf\Internal\RepeatedField $var
+     * @return $this
+     */
+    public function setErrors($var)
+    {
+        $arr = GPBUtil::checkRepeatedField($var, \Google\Protobuf\Internal\GPBType::MESSAGE, \Protos\Error::class);
+        $this->errors = $arr;
 
         return $this;
     }

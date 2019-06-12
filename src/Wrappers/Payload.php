@@ -225,7 +225,18 @@ class Payload
                 $spList[] = $span;
             }
         }
+
+        /**
+         * @var $txErrors ErrorEvent[]
+         */
+        $txErrors = $this->ErrorEventStore->list();
+        $errList = [];
+        foreach ($txErrors as $txError) {
+            $errList[] = $txError->getProtoBufError();
+        }
+
         $payloadObj->setTransactions($txList);
+        $payloadObj->setErrors($errList);
         $payloadObj->setSpans($spList);
 
         return $payloadObj;
