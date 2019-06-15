@@ -203,7 +203,13 @@ class ApmAgent
             $this->sharedData->merge($ctxSharedData)
         );
 
-        $errEvent->setTags($attributes);
+        $normalizedAttrArray = [];
+
+        $this->normalizeArray($normalizedAttrArray, $attributes,"");
+
+        //echo "<pre>";var_dump($normalizedAttrArray);exit;
+
+        $errEvent->setTags($normalizedAttrArray);
 
         $errEvent->setException($this->config->get("max_level"));
 
@@ -212,6 +218,26 @@ class ApmAgent
         $errorStore->register($errEvent);
 
         return $errEvent;
+    }
+
+    /**
+     * Normalize Error Attributes Multilevel to SingleLevel
+     *
+     * @param array  $data
+     * @param array  $attributes
+     * @param string $prefix
+     *
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-15 11:32
+     */
+    private function normalizeArray(array &$data, array $attributes, string $prefix = '') {
+        foreach ($attributes as $key => $value){
+            if (is_array($value)) {
+                $this->normalizeArray($data, $value, $prefix . $key . "_");
+            }else{
+                $data[$prefix . $key] = $value;
+            }
+        }
     }
 
     /**
