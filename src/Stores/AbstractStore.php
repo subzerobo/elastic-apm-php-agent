@@ -98,7 +98,9 @@ class AbstractStore
     }
 
     public function rename($oldKey, $newKey) {
-        $this->store[$newKey] = $this->store[$oldKey];
-        unset($this->store[$oldKey]);
+        if ($oldKey != $newKey) {
+            $this->store[$newKey] = $this->store[$oldKey];
+            unset($this->store[$oldKey]);
+        }
     }
 }
