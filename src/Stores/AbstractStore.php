@@ -96,4 +96,9 @@ class AbstractStore
     public function last() {
         return end($this->store);
     }
+
+    public function rename($oldKey, $newKey) {
+        $this->store[$newKey] = $this->store[$oldKey];
+        unset($this->store[$oldKey]);
+    }
 }

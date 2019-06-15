@@ -331,6 +331,46 @@ class ApmAgent
         $this->udpErrorHandler = $udpError;
     }
 
+    /**
+     * Reset the transaction name generator
+     *
+     * @param TransactionNameGeneratorInterface $nameGenerator
+     *
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-15 09:53
+     */
+    public function setNameGenerator(TransactionNameGeneratorInterface $nameGenerator)
+    {
+        $this->nameGenerator = $nameGenerator;
+    }
+
+    /**
+     * Rename Transaction both in Store and The Transaction Itself
+     *
+     * @param string|null $newName
+     *
+     * @throws UnknownTransactionException
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2019-06-15 09:50
+     */
+    public function renameTransaction(string $newName = null) {
+        $currentTransactionName = $this->currentTransactionName;
+        // We Regenerate new name based on the name generator function again or the name provided by user
+        $transactionNewName = $newName ?? $this->nameGenerator->generateTransactionName();
+
+        // Get the TxEvent
+        $txEvent = $this->getTransactionEvent($currentTransactionName);
+
+        // Rename the TxEvent Name
+        $txEvent->setTransactionName($transactionNewName);
+
+        // Rename key of the Event in Store
+        $this->payload->getTransactionStore()->rename(
+            $currentTransactionName,
+            $transactionNewName
+        );
+    }
+
     public function setCurrentTransactionName(string $name){
         $this->currentTransactionName = $name;
     }

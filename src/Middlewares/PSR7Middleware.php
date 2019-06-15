@@ -43,9 +43,13 @@ class PSR7Middleware
      * @param callable|null          $next
      *
      * @return ResponseInterface
+     * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\DuplicateTransactionNameException
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStartedException
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStoppedException
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\UnknownTransactionException
      * @author alikaviani <a.kaviani@sabavision.ir>
-     * @since  2019-04-18 13:20
+     * @since  2019-06-15 09:55
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next=null)
     {
@@ -66,6 +70,7 @@ class PSR7Middleware
                 'status_code'  => $response->getStatusCode(),]
         );
         $transactionEvent->stop();
+        $this->apmAgent->renameTransaction();
         $this->apmAgent->send();
         return $response;
     }
