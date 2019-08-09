@@ -317,6 +317,11 @@ trait EventTrait
             ? $_SERVER
             : array_intersect_key($_SERVER, array_flip($envMask));
 
+        array_walk($env, function(&$value) {
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+        });
         return (object) $env;
     }
 
