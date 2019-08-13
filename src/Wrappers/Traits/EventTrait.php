@@ -69,7 +69,7 @@ trait EventTrait
     {
         // Generate Random UUIDs
         $this->id = UID::Generate(16);       //Uuid::uuid4()->toString();
-        $this->trace_id = UID::Generate(16); //Uuid::uuid4()->toString();
+        $this->trace_id = $this->trace_id = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ? : UID::Generate(16); //Uuid::uuid4()->toString();
 
         // Set Shared Context Variable for further use
         $this->sharedData = $sharedData;
