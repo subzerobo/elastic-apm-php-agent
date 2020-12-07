@@ -75,7 +75,7 @@ class TransactionEvent
          * @see https://github.com/elastic/apm-server/blob/v6.7.1/docs/spec/timestamp_epoch.json
          */
         $this->setTimestamp();
-        $this->timestamp = microtime(true) * 1000000;
+        $this->timestamp = intval(microtime(true) * 1000000);
         $this->transaction->setTimestamp($this->getTimestamp());
         $this->timer->start();
     }
