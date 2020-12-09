@@ -284,11 +284,13 @@ trait EventTrait
             'env' => $this->getEnv(),
             'cookies' => $this->getCookies(),
         ];
-
+        
         $ctxRequest = new Context\Request();
-        $ctxRequest->mergeFromJsonString(json_encode($contextRequestArr));
-
-        $this->context->setRequest($ctxRequest);
+        try {
+            $ctxRequest->mergeFromJsonString(json_encode($contextRequestArr));
+            $this->context->setRequest($ctxRequest);
+        }catch(\Exception $ex){
+        }
     }
 
     /**
@@ -358,6 +360,15 @@ trait EventTrait
         return empty($cookieMask) ? $cookieHeader : '';
     }
     
+    /**
+     * Clean Bad Characters
+     *
+     * @param string $string
+     *
+     * @return string
+     * @author alikaviani <a.kaviani@sabavision.ir>
+     * @since  2020-04-10 14:43
+     */
     final protected function clean_non_chars($string) {
        return preg_replace('/[^A-Za-z0-9\-\;\(\)\,\ \/\.]/', '', $string); // Removes special chars.
     }
