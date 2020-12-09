@@ -278,7 +278,7 @@ trait EventTrait
             ],
             'headers' => [
                 'content_type' => $headers['Content-Type'] ?? '',
-                'user_agent' => $headers['User-Agent'] ?? '',
+                'user_agent' => $this->clean_non_chars($headers['User-Agent']) ?? '',
                 'cookie'     => $this->getCookieHeader($headers['Cookie'] ?? ''),
             ],
             'env' => $this->getEnv(),
@@ -356,6 +356,10 @@ trait EventTrait
 
         // Returns an empty string if cookies are masked.
         return empty($cookieMask) ? $cookieHeader : '';
+    }
+    
+    final protected function clean_non_chars($string) {
+       return preg_replace('/[^A-Za-z0-9\-\;\(\)\,\ \/\.]/', '', $string); // Removes special chars.
     }
 
 
