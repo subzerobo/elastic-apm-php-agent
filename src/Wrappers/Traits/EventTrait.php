@@ -367,7 +367,7 @@ trait EventTrait
      *
      * @return string
      * @author alikaviani <a.kaviani@sabavision.ir>
-     * @since  2020-04-10 14:43
+     * @since  2020-12-09 14:43
      */
     final protected function clean_non_chars($string) {
        return preg_replace('/[^A-Za-z0-9\-\;\(\)\,\ \/\.]/', '', $string); // Removes special chars.
