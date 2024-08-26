@@ -8,7 +8,10 @@
 
 namespace Subzerobo\ElasticApmPhpAgent\Middlewares;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
 use Subzerobo\ElasticApmPhpAgent\ActionWrappers\APMHandlerAbstract;
 
 class GuzzleAPMMiddleware
@@ -23,35 +26,17 @@ class GuzzleAPMMiddleware
         $this->actionWrapper = $actionWrapper;
     }
 
-    public function __invoke(callable $handler) {
+    public function __invoke(Request $request, RequestHandler $requestHandler): Response
+    {
+        $type = $options['type'] ?? "General";
 
-        $apmActionWrapper = $this->actionWrapper;
+        $this->actionWrapper->handleBefore($request,$type,[]);
 
-        $before = function($request, $options) use ($apmActionWrapper) {
-            $type = $options['type'] ?? "General";
-            $apmActionWrapper->handleBefore($request,$type,[]);
-            //var_dump( "BTap " . microtime(true) );
-        };
+        $response = $requestHandler->handle($request);
 
-        $after = function($request,$option,$response) use ($apmActionWrapper) {
-            $type = $options['type'] ?? "General";
-            $response->then(function (\Psr\Http\Message\ResponseInterface $response) use($apmActionWrapper,$type) {
-                $apmActionWrapper->handleAfter($response,$type,[]);
-            });
-        };
+        $this->actionWrapper->handleAfter($response,$type,[]);
 
-        // Tap Function of Guzzle
-
-        return function ($request, array $options) use ($handler, $before, $after) {
-            if ($before) {
-                $before($request, $options);
-            }
-            $response = $handler($request, $options);
-            if ($after) {
-                $after($request, $options, $response);
-            }
-            return $response;
-        };
+        return $response;
     }
 
 }

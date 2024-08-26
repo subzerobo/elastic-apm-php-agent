@@ -69,7 +69,7 @@ trait EventTrait
     {
         // Generate Random UUIDs
         $this->id = UID::Generate(16);       //Uuid::uuid4()->toString();
-        $this->trace_id = $this->trace_id = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ? : UID::Generate(16); //Uuid::uuid4()->toString();
+        $this->trace_id = UID::Generate(16); //Uuid::uuid4()->toString();
 
         // Set Shared Context Variable for further use
         $this->sharedData = $sharedData;
@@ -278,19 +278,17 @@ trait EventTrait
             ],
             'headers' => [
                 'content_type' => $headers['Content-Type'] ?? '',
-                'user_agent' => $this->clean_non_chars($headers['User-Agent']) ?? '',
+                'user_agent' => $headers['User-Agent'] ?? '',
                 'cookie'     => $this->getCookieHeader($headers['Cookie'] ?? ''),
             ],
             'env' => $this->getEnv(),
             'cookies' => $this->getCookies(),
         ];
-        
+
         $ctxRequest = new Context\Request();
-        try {
-            $ctxRequest->mergeFromJsonString(json_encode($contextRequestArr));
-            $this->context->setRequest($ctxRequest);
-        }catch(\Exception $ex){
-        }
+        $ctxRequest->mergeFromJsonString(json_encode($contextRequestArr));
+
+        $this->context->setRequest($ctxRequest);
     }
 
     /**
@@ -319,11 +317,6 @@ trait EventTrait
             ? $_SERVER
             : array_intersect_key($_SERVER, array_flip($envMask));
 
-        array_walk($env, function(&$value) {
-            if (is_array($value)) {
-                $value = json_encode($value);
-            }
-        });
         return (object) $env;
     }
 
@@ -358,19 +351,6 @@ trait EventTrait
 
         // Returns an empty string if cookies are masked.
         return empty($cookieMask) ? $cookieHeader : '';
-    }
-    
-    /**
-     * Clean Bad Characters
-     *
-     * @param string $string
-     *
-     * @return string
-     * @author alikaviani <a.kaviani@sabavision.ir>
-     * @since  2020-12-09 14:43
-     */
-    final protected function clean_non_chars($string) {
-       return preg_replace('/[^A-Za-z0-9\-\;\(\)\,\ \/\.]/', '', $string); // Removes special chars.
     }
 
 

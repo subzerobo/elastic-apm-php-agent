@@ -9,15 +9,14 @@
 namespace Subzerobo\ElasticApmPhpAgent\Middlewares;
 
 
-use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+
 use Subzerobo\ElasticApmPhpAgent\ApmAgent;
-use Subzerobo\ElasticApmPhpAgent\Factories\DefaultTransactionNameFactoryAbstract;
-use Subzerobo\ElasticApmPhpAgent\Factories\TransactionNameGeneratorInterface;
 
 /**
- * Add this middleware as the first middleware to not loose any span
+ * Add this middleware as the first middleware to not lose any span
  *
  * Class PSR7Middleware
  * @package Subzerobo\ElasticApmPhpAgent\Middlewares
@@ -38,27 +37,24 @@ class PSR7Middleware
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable|null          $next
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Server\RequestHandlerInterface $requestHandler
      *
-     * @return ResponseInterface
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return \Psr\Http\Message\ResponseInterface
      * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\DuplicateTransactionNameException
      * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStartedException
      * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\TimerNotStoppedException
-     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\UnknownTransactionException
+     * @throws \Subzerobo\ElasticApmPhpAgent\Exceptions\UnknownTransactionException|\GuzzleHttp\Exception\GuzzleException
      * @author alikaviani <a.kaviani@sabavision.ir>
      * @since  2019-06-15 09:55
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next=null)
+    public function __invoke(Request $request, RequestHandler $requestHandler): Response
     {
         // Start Transaction
         $transactionEvent = $this->apmAgent->startTransaction();
 
         // TODO: Implement __invoke() method.
-        $response = $next($request, $response);
-
+        $response = $requestHandler->handle($request);
 
         // Set and Stop Transaction
         $transactionEvent->setResult("HTTP " . $response->getStatusCode());
@@ -69,9 +65,12 @@ class PSR7Middleware
                 'headers_sent' => true,
                 'status_code'  => $response->getStatusCode(),]
         );
+
         $transactionEvent->stop();
+
         $this->apmAgent->renameTransaction();
         $this->apmAgent->send();
+
         return $response;
     }
 }
