@@ -131,8 +131,6 @@ class SpanEvent
      */
     public function setSpanName(string $name)
     {
-        $name = strlen($name) > 1024 ? substr($name, 0, 1021).'...' : $name;
-
         $this->span->setName($name);
     }
 
